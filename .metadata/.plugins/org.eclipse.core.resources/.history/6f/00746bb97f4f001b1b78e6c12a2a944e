@@ -1,0 +1,20 @@
+package decisao;
+
+import javax.swing.JOptionPane;
+
+public class Lista2Ex1 {
+
+	public static void main(String[] args) {
+
+
+		String cliente = JOptionPane.showInputDialog("Informe o nome do cliente").toUpperCase();
+		short diarias = Short.parseShort(JOptionPane.showInputDialog("Informe o numero de diárias do cliente"));
+
+		if (diarias>15) {
+			System.out.println("O valor total da conta do cliente " + cliente +" é de R$" + (80 * diarias + 5.5 * diarias));
+		}
+		
+		
+	}
+
+}

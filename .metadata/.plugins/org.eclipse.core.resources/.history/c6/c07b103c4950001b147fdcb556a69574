@@ -1,0 +1,50 @@
+package repeticao;
+
+import javax.swing.JOptionPane;
+
+public class Ppt77Ex4 {
+
+	public static void main(String[] args) {
+		String nome =" ";
+		short idade=0;
+		short maioresIdade=0;
+		
+		
+		do {
+			nome = JOptionPane.showInputDialog("Digite o Nome").toUpperCase();
+			idade = Short.parseShort(JOptionPane.showInputDialog("Digite a Idade"));
+			
+			if (idade>=18) {
+			maioresIdade = (short) (maioresIdade + 1);
+			// maioresIdade++
+			// maioresIdade+=1
+			}
+			
+		}while(JOptionPane.showConfirmDialog(null, "Continuar?", "Pergunta", JOptionPane.YES_NO_OPTION)==0);
+		System.out.println("Maiores de idade: " + maioresIdade);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+	}
+
+}

@@ -1,0 +1,31 @@
+package decisao;
+
+import javax.swing.JOptionPane;
+
+public class DesafioDecisaoSimples {
+
+	public static void main(String[] args) {
+		/*
+		 * Terá que inputar nome e idade de uma pessoa
+		 * Devera exibir uma das mensagens:
+		 *  - maior que 70 anos ou igual a 16 ou 17 = voto facultativo
+		 *  - menor que 16 anos = Nao vota
+		 *  - entre 18 e 70 = voto obrigatorio
+		 *  
+		 */
+		
+		String nome = JOptionPane.showInputDialog("Informe seu nome").toUpperCase();
+		int idade = Integer.parseInt(JOptionPane.showInputDialog("Informe sua idade"));
+
+		if (idade>70 || idade==16 || idade==17) {
+			System.out.println("Voto facultativo");
+		} else if (idade<16) {
+			System.out.println("Nao Vota");
+		} else if (idade>=18 && idade<=70 ) {
+			System.out.println("Voto obrigatório");
+		}
+		
+		
+	}
+
+}

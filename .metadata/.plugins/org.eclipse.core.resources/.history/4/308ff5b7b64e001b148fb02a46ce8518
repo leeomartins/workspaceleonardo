@@ -1,0 +1,53 @@
+package variaveis;
+
+public class TiposDados {
+
+	public static void main(String[] args) {
+
+/*
+ * Existem dois tipos de dados
+ * 
+ *  - Alfanumerico: é o dado que nao vai ser utilizado em uma expressão matemática
+ *  	
+ *  
+ *  - Numérico: é o dado que PODE ser usado em uma expressão matemática
+ */
+		
+		/* 
+		 * Nome da variavel = identificador
+		 * 
+		 * Regras: 
+		 *  - 1º: Não começarás com números. 1berto (não pode)
+		 *  - 2º: Não farás uso de palavras reservadas int. (não pode), class (nao pode)
+		 *  - 3º: Não usarás caracteres especiais. d@t@ (não pode), nome cliente (nao pode)
+		 *  
+		 * Padroes:
+		 *  - Nomes significativos. Evitem x, n1, xpto
+		 *  - Começar com letra minuscula
+		 *  - padrão CamelCase (dataNascimento) ou (data_Nascimento) 
+		 *  
+		 * 
+		 */
+		
+		String nome = "Leonardo Martins";
+		int idade = 27;
+		double altura = 1.72;
+		
+		System.out.println(nome);
+		System.out.println(idade);
+		System.out.println(altura);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+	}
+
+}

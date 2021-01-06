@@ -1,0 +1,24 @@
+package repeticao;
+
+import javax.swing.JOptionPane;
+
+public class Ppt77Ex3 {
+
+	public static void main(String[] args) {
+		
+		int contadorMedio = 0;
+		int contadorSuperior = 0;
+		int contadorPos=0;
+		String escolaridade=" ";
+		
+		do {
+		escolaridade = JOptionPane.showInputDialog("Informe o seu nível de escolaridade (Médio, Superior ou Pós)").toUpperCase();
+		 
+		} while (escolaridade!="MÉDIO" && escolaridade!="MEDIO" && escolaridade!="PÓS" && escolaridade!="POS" && escolaridade!="SUPERIOR"); 
+		
+		
+		
+
+	}
+
+}
