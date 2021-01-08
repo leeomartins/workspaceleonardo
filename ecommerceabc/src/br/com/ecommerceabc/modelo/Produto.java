@@ -2,15 +2,33 @@ package br.com.ecommerceabc.modelo;
 
 public class Produto {
 
-	
+
 	private int id;
 	private String descricao;
 	private float valorVenda;
 	private float valorCompra;
 	private int qtde;
+
 	
 	
+
 	
+	
+	public String toString() {
+		return "Produto [id=" + id + ", descricao=" + descricao + ", valorVenda=" + valorVenda + ", valorCompra="
+				+ valorCompra + ", qtde=" + qtde + "]";
+	}
+	public Produto() {
+		super();
+	}
+	public Produto(int id, String descricao, float valorVenda, float valorCompra, int qtde) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.valorVenda = valorVenda;
+		this.valorCompra = valorCompra;
+		this.qtde = qtde;
+	}
 	public int getId() {
 		return id;
 	}
@@ -41,7 +59,7 @@ public class Produto {
 	public void setQtde(int qtde) {
 		this.qtde = qtde;
 	}
-	
+
 	public String getAll() {
 		return "ID...: " + id + "\n" + "Descrição...:" + descricao + "\n" + "Valor da Venda...:" + valorVenda + "\n" + "Valor de compra...:" + valorCompra + "\n" + "Quantidade...:" + qtde;
 	}
@@ -74,39 +92,17 @@ public class Produto {
 		}
 		else 
 			return "ESTOQUE NORMAL";
-		}
-	public void getPromocao (float porcentagem) {
-		
 	}
-	
-	
-	
-	
+	public float getPromocao (float porcentagem) {
+		return valorVenda*(1-(porcentagem/100)); 
+
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
 }
+
+
+
+
