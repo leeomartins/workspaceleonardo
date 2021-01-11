@@ -60,6 +60,7 @@ public class Aluno {
 	
 	
 	public String getSaudacao() {
+
 		return "Bem vindo " + nome.toUpperCase();
 	}
 	

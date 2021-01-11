@@ -1,4 +1,4 @@
-package br.com.universidadexpto.util;
+package br.com.bancofoz.util;
 
 import javax.swing.JOptionPane;
 

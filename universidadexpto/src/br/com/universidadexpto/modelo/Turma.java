@@ -75,7 +75,11 @@ public class Turma {
 	
 	public String getResumo () {
 		return 
-		
+				"Nome do Curso: " + curso.getDescricao() + "\n" +
+				"Sala: " + sala + "\n" +
+				"Aluno: " + aluno.getSaudacao() + "\n" +
+				"Professor: " + professor.getSaudacao();
+				
 		
 	}
 	

@@ -1,6 +1,8 @@
 package br.com.ecommerceabc.modelo;
 
-public class Cliente {
+import br.com.ecommerceabc.util.PadraoPessoa;
+
+public class Pessoa implements PadraoPessoa {
 
 	private int id;
 	private String nome;
@@ -11,8 +13,9 @@ public class Cliente {
 	
 	
 	
-	
-	
+public String getResumo () {
+	return null;
+}
 	
 	
 	
@@ -38,7 +41,7 @@ public class Cliente {
 
 
 
-	public Cliente() {
+	public Pessoa() {
 		super();
 	}
 
@@ -47,7 +50,7 @@ public class Cliente {
 
 
 
-	public Cliente(int id, String nome, String email, Endereco endereco) {
+	public Pessoa(int id, String nome, String email, Endereco endereco) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -137,6 +140,14 @@ public class Cliente {
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+
+
+	@Override
+	public void setResumo(String param1, String param2) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

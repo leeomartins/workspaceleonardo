@@ -2,14 +2,14 @@ package br.com.ecommerceabc.teste;
 
 import javax.swing.JOptionPane;
 
-import br.com.ecommerceabc.modelo.Cliente;
+import br.com.ecommerceabc.modelo.Pessoa;
 import br.com.ecommerceabc.modelo.Endereco;
 
 public class TesteCliente2 {
 
 	public static void main(String[] args) {
 
-		Cliente cliente = new Cliente(
+		Pessoa cliente = new Pessoa(
 				
 				Integer.parseInt(JOptionPane.showInputDialog("Codigo")),
 				JOptionPane.showInputDialog("Nome"),

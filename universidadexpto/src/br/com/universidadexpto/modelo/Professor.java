@@ -75,25 +75,31 @@ public class Professor {
 	
 	
 	
-	public float calcularSalario (int qtdeHoras) {
-		float salarioBruto=0;
-		float salarioLiquido=0;
-		salarioBruto=(valorHora*qtdeHoras)*(float)1.06 ;
-		salarioLiquido=salarioBruto*(float) 0.92;
-		return salarioLiquido;
+	public String calcularSalario (int qtdeHoras) {
+		float salarioBruto =(float) (valorHora+1.06) *qtdeHoras;
+		float fgts = salarioBruto * (float) 0.08;
+		float salarioLiquido = salarioBruto - fgts;
+		return "Salario Bruto: " + salarioBruto +"\n" + "FGTS: " + fgts + "\n" + "Salario Liquido: " + salarioLiquido;
+		
 				}
 	
 	public String getSaudacao() {
-		if (formacao=="DOUTOR" || formacao=="DR") {
-			return "PhD " + nome.toUpperCase();
-			}
-		else if (formacao=="MESTRE") {
-			return "Ms. " + nome.toUpperCase();
+		String primeiroNome=nome;
+		if(nome.contains(" ")==true) {
+			primeiroNome = nome.substring(0,nome.indexOf(" "));
 		}
-		else if (formacao=="ESPECIALISTA") {
-			return "Especialista" + nome.toUpperCase();
+		if (formacao.toUpperCase().equals("DOUTOR")==true) {
+			return "PhD " + primeiroNome;
 		}
-		else return "Bem vindo";
+		else if (formacao.toUpperCase().equals("MESTRE")==true) {
+			return "Ms. " + primeiroNome; 
+		}
+		else if (formacao.toUpperCase().equals("ESPECIALISTA")==true) {
+			return "Especialista " + primeiroNome;
+		}
+		else {
+			return "Sem formação: " + primeiroNome;
+		}
 		 
 			
 	}
