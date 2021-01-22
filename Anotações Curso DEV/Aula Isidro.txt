@@ -1,3 +1,1100 @@
+LOGOUT
+Passo 1 = preciso de um botao
+<button type="button" class="btn btn-primary" onclick="logout()">Logout</button>
+
+Passo 2 = funcao Logout
+
+
+function logout(){
+    localStorage.removeItem("userMod");
+    window.location = "index.html";
+}
+
+
+
+
+
+
+function carregaExtrato(){
+    // praxe = fazer a verificacao se o usuário existe mesmo
+    var strUser = localStorage.getItem("userMod");
+    if (!strUser){
+        window.location = "index.html";
+        return;
+    }
+
+    // capturar o ID lá da url
+    var param = window.location.search;
+    var idcomunidade = param.substr(4);
+
+    fetch("http://localhost:8088/modernizacao/comunidade/"+idcomunidade)
+        .then(res => res.json())
+        .then(lista => preencheExtrato(lista));
+}
+
+function preencheExtrato(lista){
+    var total=0;
+    var extratoSTR="";
+    for (i=0; i<lista.length; i++){
+        var mod = lista[i];
+        extratoSTR = extratoSTR + `<div class="row">
+                                    <div class="col-2"> ${mod.data} </div>
+                                    <div class="col-9"> ${mod.descricao} </div>
+                                    <div class="col-1"> ${mod.percentual}% </div>
+                                   </div>`;
+        total = total + mod.percentual;
+    }
+    document.getElementById("extrato").innerHTML = extratoSTR;
+    document.getElementById("progresso").innerHTML = `<h4> Progresso total: ${total}%</h4>`;
+    if (lista.length > 0){
+        document.getElementById("comunidade").innerHTML = `<h3>${lista[0].comunidade.nome}
+                                                          (${lista[0].comunidade.teamLeader.nome})</h3>`
+    }
+    else{
+        document.getElementById("comunidade").innerHTML = "Comunidade sem ações";
+    }
+}
+
+
+
+
+-------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script type="text/javascript" src="extrato.js"></script>    
+    <title>.: Extrato de Modernizacao :. </title>
+</head>
+<body onload="carregaExtrato()">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Extrato de Modernização</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                *** Nome da comunidade + líder ***
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                *** Progresso total *** 
+            </div>
+        </div>
+
+        <div id="extrato">
+            *** aqui terei as várias linhas de modernização *** 
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
+------
+
+
+package br.com.isidrocorp.modernizacao.dao;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+import br.com.isidrocorp.modernizacao.dto.Percentual;
+import br.com.isidrocorp.modernizacao.dto.QuantidadeOcorrencias;
+import br.com.isidrocorp.modernizacao.model.Comunidade;
+import br.com.isidrocorp.modernizacao.model.Modernizacao;
+
+
+
+
+
+
+
+
+public interface ModernizacaoDAO extends CrudRepository<Modernizacao,Integer>{
+	
+	public ArrayList<Modernizacao> findAllByComunidade(Comunidade comunidade);
+	
+	@Query("select new br.com.isidrocorp.modernizacao.dto.Percentual(sum(m.percentual))  "
+		 + " from Modernizacao m where m.comunidade.id = :id")
+	public Percentual buscarPercentualDaComunidade(@Param(value="id") int id);
+
+	
+	@Query("select new br.com.isidrocorp.modernizacao.dto.QuantidadeOcorrencias(count(numSeq)) "
+		+  " from Modernizacao m where m.comunidade.id = :id and"
+		+  "       year(m.data) = year(:data) and"
+		+  "       month(m.data) = month(:data)")
+	public QuantidadeOcorrencias buscarOcorrencias(@Param(value="id") int id, 
+			                                       @Param(value="data") LocalDate data);
+}
+
+
+
+
+
+
+function pesquisar(){
+    // idéia: buscar o id da comunidade + a data de cadastro e ir até o backend e buscar
+    // as restricoes
+
+    var txtData = document.getElementById("txtData").value;
+
+    fetch("http://localhost:8088/modernizacao/"+IDCom+"/"+txtData)
+        .then(res=> res.json())
+        .then(objeto => {
+            var txtRestricao = `${objeto.percentual}% concluido e ${objeto.quantidade} ocorrencias neste mes/ano`;
+            document.getElementById("restricoes").innerHTML = txtRestricao;
+            pConclusao = objeto.percentual;
+            numOcorrencias = objeto.quantidade;
+        });
+}
+
+
+
+
+public interface ModernizacaoDAO extends CrudRepository<Modernizacao,Integer>{
+
+}
+
+
+
+// preciso do ID da comunidade global para várias funções
+var IDCom;
+
+
+function carregaInfo(){
+    var userSTR = localStorage.getItem("userMod");
+    if (!userSTR){
+        window.location = "index.html";
+        return;
+    }
+
+    // preciso recuperar o ID da comunidade que veio na URL
+    var str = window.location.search;
+    console.log(str);
+    var idComunidade = str.substr(4);
+    console.log("ID da comunidade = "+idComunidade);
+
+    IDCom = parseInt(idComunidade); // já atribuí e converti para inteiro
+
+
+    fetch("http://localhost:8088/comunidades/"+IDCom)
+        .then(res => res.json())
+        .then(comunidade => document.getElementById("nomeComunidade").innerHTML = comunidade.nome);
+
+    /*
+     Como eu leio o fetch?
+     res = fetch("http://localhost:8088/comunidades/"+IDCom)
+     comunidade = res.json();
+     document.getElementById("nomeComunidade").innerHTML = comunidade.nome;
+    */
+
+}
+
+function cadastrar(){
+    var txtData        = document.getElementById("txtData").value;
+    var txtDescricao   = document.getElementById("txtDescricao").value;
+    var txtPercentual  = document.getElementById("txtPercentual").value;
+
+    var msgBody = {
+        data : txtData,
+        descricao : txtDescricao,
+        percentual : parseFloat(txtPercentual),
+        comunidade : {
+            id : IDCom
+        }
+    }
+
+    var cabecalho = {
+        method: "POST",
+        body  : JSON.stringify(msgBody),
+        headers : {
+            "content-type":"application/json"
+        }
+    }
+
+    fetch("http://localhost:8088/modernizacao/nova", cabecalho)
+       .then(res => {
+           if (res.status == 201){
+               alert("Item de modernizacao cadastrado com sucesso!");
+           }
+           else{
+               alert("Erro ao gravar item de modernizacao");
+           }
+       });
+
+}
+
+
+
+--- MODERNIZACAOCONTROLLER.JAVA
+package br.com.isidrocorp.modernizacao.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.isidrocorp.modernizacao.dao.ModernizacaoDAO;
+import br.com.isidrocorp.modernizacao.model.Modernizacao;
+
+@RestController
+@CrossOrigin("*")
+public class ModernizacaoController {
+	
+	@Autowired
+	ModernizacaoDAO dao;
+	
+	@PostMapping("/modernizacao/nova")
+	public ResponseEntity<Modernizacao> novaModernizacao(@RequestBody Modernizacao nova){
+		try {
+			dao.save(nova);
+			return ResponseEntity.status(201).body(nova);
+		}
+		catch(Exception ex) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+}
+
+
+
+--comunidadecontroller.java---
+package br.com.isidrocorp.modernizacao.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.isidrocorp.modernizacao.dao.ComunidadeDAO;
+import br.com.isidrocorp.modernizacao.model.Comunidade;
+
+@RestController
+@CrossOrigin("*")
+public class ComunidadeController {
+
+	// vou precisar acessar o banco de dados?
+	@Autowired
+	ComunidadeDAO dao;
+	
+	// vamos criar um método para buscar uma comunidade pelo ID
+	
+	@GetMapping("/comunidades/{id}")
+	public Comunidade recuperarPeloId(@PathVariable int id) {
+		return dao.findById(id).get();
+	}
+}
+
+
+
+
+
+---MODERNIZACAODAO.JAVA---
+package br.com.isidrocorp.modernizacao.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import br.com.isidrocorp.modernizacao.model.Modernizacao;
+
+public interface ModernizacaoDAO extends CrudRepository<Modernizacao,Integer>{
+
+}
+
+---COMUNIDADEDAO.JAVA---
+
+package br.com.isidrocorp.modernizacao.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import br.com.isidrocorp.modernizacao.model.Comunidade;
+
+public interface ComunidadeDAO extends CrudRepository<Comunidade, Integer> {
+
+}
+
+
+
+
+---NOVAMODERNIZACAO.HTML
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script type="text/javascript" src="novamodernizacao.js"></script>
+    <title>.: Cadastro de Modernizacao :.</title>
+</head>
+
+<body onload="carregaInfo()">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text center">
+                <h3>Cadastro de nova Modernização</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h4 id="nomeComunidade">
+                    ***NOME***
+                </h4>
+            </div>
+        </div>
+        <!-- formulario de cadastro -->
+        <label for="formulario" class="form-label">Cadastro da Modernização</label>
+        <div id="formulario">
+            <div class="mb-3">
+                <label for="txtData" class="form-label">Data da Modernização</label>
+                <input type="date" class="form-control" id="txtData">
+                <button type="button" class="btn btn-primary">Pesquisar</button>
+            </div>
+
+            <div class="mb-3">
+                <label for="txtDescricao" class="form-label">Descrição</label>
+                <input type="text" class="form-control" id="txtDescricao">
+            </div>
+
+            <div class="mb-3">
+                <label for="txtPercentual" class="form-label">Percentual de Conclusão</label>
+                <input type="number" min="0" max="100" class="form-control" id="txtPercentual">
+            </div>
+
+            <button type="button" class="btn btn-primary">Cadastrar</button>
+
+        </div>
+        <!-- fim do formulario -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+-----------
+
+---NOVAMODERNIZACAO.JS----
+// preciso do ID da comunidade global para várias funções
+var IDCom;
+
+
+function carregaInfo(){
+    var userSTR = localStorage.getItem("userMod");
+    if (!userSTR){
+        window.location = "index.html";
+        return;
+    }
+
+    // preciso recuperar o ID da comunidade que veio na URL
+    var str = window.location.search;
+    console.log(str);
+    var idComunidade = str.substr(4);
+    console.log("ID da comunidade = "+idComunidade);
+
+    IDCom = parseInt(idComunidade); // já atribuí e converti para inteiro
+
+
+    fetch("http://localhost:8088/comunidades/"+IDCom)
+        .then(res => res.json())
+        .then(comunidade => document.getElementById("nomeComunidade").innerHTML = comunidade.nome);
+
+    /*
+     Como eu leio o fetch?
+     res = fetch("http://localhost:8088/comunidades/"+IDCom)
+     comunidade = res.json();
+     document.getElementById("nomeComunidade").innerHTML = comunidade.nome;
+    */
+
+}
+
+
+
+
+
+package br.com.isidrocorp.modernizacao.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import br.com.isidrocorp.modernizacao.model.Comunidade;
+
+public interface ComunidadeDAO extends CrudRepository<Comunidade, Integer> {
+
+}
+
+
+-----
+
+
+
+--novamodernizacao.js
+
+function carregaInfo(){
+    var userSTR = localStorage.getItem("userMod");
+    if (!userSTR){
+        window.location = "index.html";
+        return;
+    }
+}
+
+-----comunidades.js----------
+
+
+function carregaInfo(){
+    var userSTR = localStorage.getItem("userMod");
+    // rotina para verificar se o usuário está ou não conectado
+    if (!userSTR){
+        window.location = "index.html";
+        return;
+    }
+
+    var user = JSON.parse(userSTR);// reconverti para trabalhar como um objeto
+
+    var strFoto = `<img src="${user.linkFoto}" width="100%">`;
+    var strBio  = `<h4>${user.nome}</h4>
+                   <p><strong>RACF:</strong> ${user.racf}</p>
+                   <p><strong>EMAIL:</strong> ${user.email}</p>
+                  `
+    document.getElementById("fotoUser").innerHTML = strFoto;
+    document.getElementById("bioUser").innerHTML = strBio;
+
+    // aqui começo a preencher a lista de comunidades
+    var strLista = "";
+    for (i=0; i<user.comunidades.length; i++){
+        var comunidade = user.comunidades[i];
+
+
+        strLista = strLista + `<div class="row">
+                                  <div class="col-8">${comunidade.nome}</div>
+                                  <div class="col-2"><a href="novamodernizacao.html?id=${comunidade.id}" class="btn btn-success">Novo</a></div>
+                                  <div class="col-2"><a href="extrato.html?id=${comunidade.id}" class="btn btn-warning">Extrato</a></div>
+                               </div>`;
+    }
+    document.getElementById("listaComunidades").innerHTML = strLista;
+
+}
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>.: Cadastro de Modernizacao :.</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text center">
+                <h3>Cadastro de nova Modernização</h3>
+            </div>
+        </div>
+
+        <!-- formulario de cadastro -->
+        <label for="formulario" class="form-label">Cadastro da Modernização</label>
+        <div id="formulario">
+            <div class="mb-3">
+                <label for="txtData" class="form-label">Data da Modernização</label>
+                <input type="date" class="form-control" id="txtData">
+                <button type="button" class="btn btn-primary">Pesquisar</button>
+            </div>
+
+            <div class="mb-3">
+                <label for="txtDescricao" class="form-label">Descrição</label>
+                <input type="text" class="form-control" id="txtDescricao">
+            </div>
+
+            <div class="mb-3">
+                <label for="txtPercentual" class="form-label">Percentual de Conclusão</label>
+                <input type="number" min="0" max="100" class="form-control" id="txtPercentual">
+            </div>
+
+            <button type="button" class="btn btn-primary">Cadastrar</button>
+
+        </div>
+        <!-- fim do formulario -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+
+--------
+
+
+
+package br.com.isidrocorp.modernizacao.model;
+
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="itmn_modernizacao")
+public class Modernizacao {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="num_seq")
+	private int        numSeq;
+	
+	@Column(name="descricao", length = 100, nullable = false)
+	private String     descricao;
+	
+	@Column(name="data_modernizacao", nullable = false)
+	private LocalDate  data;
+	
+	@Column(name="percentual", nullable = false)
+	private float      percentual;
+	
+	@ManyToOne
+	@JoinColumn(name="id_comunidade")
+	private Comunidade comunidade;
+
+}
+
+
+
+
+
+create table itmn_modernizacao(
+   num_seq           integer not null auto_increment primary key,
+   descricao         varchar(100) not null,
+   data_modernizacao date not null,
+   percentual        float not null,
+   id_comunidade     integer not null,
+   
+   constraint fk_comunidade foreign key (id_comunidade) references itmn_comunidade(id_comunidade)
+);
+
+
+function carregaInfo(){
+    var userSTR = localStorage.getItem("userMod");
+    // rotina para verificar se o usuário está ou não conectado
+    if (!userSTR){
+        window.location = "index.html";
+        return;
+    }
+
+    var user = JSON.parse(userSTR);// reconverti para trabalhar como um objeto
+
+    var strFoto = `<img src="${user.linkFoto}" width="100%">`;
+    var strBio  = `<h4>${user.nome}</h4>
+                   <p><strong>RACF:</strong> ${user.racf}</p>
+                   <p><strong>EMAIL:</strong> ${user.email}</p>
+                  `
+    document.getElementById("fotoUser").innerHTML = strFoto;
+    document.getElementById("bioUser").innerHTML = strBio;
+
+    // aqui começo a preencher a lista de comunidades
+    var strLista = "";
+    for (i=0; i<user.comunidades.length; i++){
+        var comunidade = user.comunidades[i];
+
+
+        strLista = strLista + `<div class="row">
+                                  <div class="col-8">${comunidade.nome}</div>
+                                  <div class="col-2"><a href="novaocorrencia.html" class="btn btn-success">Novo</a></div>
+                                  <div class="col-2"><a href="extrato.html" class="btn btn-warning">Extrato</a></div>
+                               </div>`;
+    }
+    document.getElementById("listaComunidades").innerHTML = strLista;
+
+}
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script type="text/javascript" src="comunidades.js"></script>
+    <title>.: Comunidades :.</title>
+</head>
+<body onload="carregaInfo()">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Gerenciamento de Comunidades</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4" id="fotoUser">
+                ** aqui vai a foto do usuario ***
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8" id="bioUser">
+                 ** aqui vao as infos do usuario ***
+            </div>
+        </div>
+
+        <div id="listaComunidades">
+            ** aqui vao as comunidades ***
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+package br.com.isidrocorp.modernizacao.model;
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity // defino que a classe usuário é armazenável em banco
+@Table(name = "itmn_usuario") // e que está relacionada à tabela de nome itmn_usuario
+public class Usuario {
+
+	@Id // @Id indica que o atributo é chave primária
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // aqui indica que o valor é gerado automaticamente pelo banco
+	@Column(name = "id_usuario") // defino o nome da coluna
+	private int id;
+
+	@Column(name = "nome_usuario", length = 100, nullable = false)
+	private String nome;
+
+	@Column(name = "email_usuario", length = 100, nullable = false)
+	private String email;
+
+	@Column(name = "racf_usuario", length = 7, nullable = false)
+	private String racf;
+
+	@Column(name = "senha_usuario", length = 50, nullable = false)
+	private String senha;
+
+	@Column(name = "link_foto", length = 255)
+	private String linkFoto;
+	
+	@OneToMany(mappedBy = "teamLeader", cascade = CascadeType.ALL)
+        @JsonIgnoreProperties("teamLeader")
+	private List<Comunidade> comunidades;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getRacf() {
+		return racf;
+	}
+
+	public void setRacf(String racf) {
+		this.racf = racf;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public String getLinkFoto() {
+		return linkFoto;
+	}
+
+	public void setLinkFoto(String linkFoto) {
+		this.linkFoto = linkFoto;
+	}
+
+	public List<Comunidade> getComunidades() {
+		return comunidades;
+	}
+
+	public void setComunidades(List<Comunidade> comunidades) {
+		this.comunidades = comunidades;
+	}
+
+}
+
+
+
+----
+package br.com.isidrocorp.modernizacao.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="itmn_comunidade")
+public class Comunidade {
+	
+	@Id  // indica que é chave primária
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // é um auto-increment (o IDENTITY é a estratégia q o Mysql usa)
+	@Column(name="id_comunidade") // defino o nome da coluna
+	private int id;
+	
+	@Column(name="nome_comunidade", length = 100, nullable = false)
+	private String nome;
+	
+	@ManyToOne
+	@JoinColumn(name="id_usuario")
+        @JsonIgnoreProperties("comunidades")
+	private Usuario teamLeader;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Usuario getTeamLeader() {
+		return teamLeader;
+	}
+
+	public void setTeamLeader(Usuario teamLeader) {
+		this.teamLeader = teamLeader;
+	}
+}
+
+
+
+-----
+
+
+create table itmn_comunidade(
+   id_comunidade integer not null auto_increment primary key,
+   nome_comunidade varchar(100) not null,
+   id_usuario integer not null,
+   
+   constraint fk_usuario foreign key (id_usuario) references itmn_usuario(id_usuario)
+);  
+
+insert into itmn_comunidade values (null, 'Time Dev Internet Banking', 1);
+insert into itmn_comunidade values (null, 'Time Dev Mobile', 1);
+insert into itmn_comunidade values (null, 'Time Dev Portal Intranet', 1);
+insert into itmn_comunidade values (null, 'Time Dev Sistema RH', 1);
+insert into itmn_comunidade values (null, 'Time Dev Sistema Modernizacao', 1);
+
+insert into itmn_comunidade values (null, 'Infra Interna DC 1', 2);
+insert into itmn_comunidade values (null, 'Infra Agencias DC 1', 2);
+insert into itmn_comunidade values (null, 'Infra Adm Central', 2);
+insert into itmn_comunidade values (null, 'Telecom', 2);
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script type="text/javascript" src="comunidades.js"></script>
+    <title>.: Comunidades :.</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Gerenciamento de Comunidades</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4" id="fotoUser">
+                ** aqui vai a foto do usuario ***
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8" id="bioUser">
+                 ** aqui vao as infos do usuario ***
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+------
+function enviar(){
+    var txtLogin = document.getElementById("txtLogin").value;
+    var txtSenha = document.getElementById("txtSenha").value;
+
+    console.log("Voce digitou = "+txtLogin+" / "+txtSenha);
+
+    var msgBody = {
+        email : txtLogin,
+        racf  : txtLogin,
+        senha : txtSenha
+    };
+
+    var cabecalho = {
+        method : "POST",
+        body   : JSON.stringify(msgBody),
+        headers: {
+            "content-type":"application/json"
+        }
+    }
+
+    /* como interpretar a instrução a seguir? Se ela fosse "sequencial", seria algo assim:
+       res = fetch("http://localhost:8088/login", cabecalho);
+       console.log(res);
+    */
+    fetch("http://localhost:8088/login", cabecalho).then(res => trataStatus(res));
+}
+
+
+function trataStatus(res){
+    if (res.status == 200){
+        // preciso extrair os dados da resposta
+        res.json().then(user => {
+            localStorage.setItem("userMod", JSON.stringify(user));  //gravo os dados do usuário no cache
+            window.location = "comunidades.html";  // mudo de página
+        });
+    }
+    else if (res.status == 403){
+        document.getElementById("msgErro").innerHTML = "Senha Inválida!";
+    }
+    else if (res.status == 404){
+        document.getElementById("msgErro").innerHTML = "Usuário não encontrado!";
+    }
+    else {
+        document.getElementById("msgErro").innerHTML = "Erro desconhecido";
+
+    }
+
+}
+
+
+-----
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <title>.: Sistema de Modernização :.</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Sistema de Modernização Cloud</h3>
+            </div>
+        </div>
+
+
+
+        <!-- meu formulário -->
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+        <!-- fim do formulario -->
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+
+
+
+-----
+
+
+package br.com.isidrocorp.modernizacao.controller;
+
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.isidrocorp.modernizacao.dao.UsuarioDAO;
+import br.com.isidrocorp.modernizacao.model.Usuario;
+
+@RestController
+public class UsuarioController {
+
+	@Autowired // injeção de dependências
+	UsuarioDAO dao;
+	
+	@GetMapping("/usuarios")
+	public ArrayList<Usuario> recuperarTodos(){
+		ArrayList<Usuario> lista;
+		
+		lista = (ArrayList<Usuario>)dao.findAll();
+		
+		return lista;	
+	}
+	
+	/* Funcionalidade de login:
+	 * Por que POST Mapping? - para que o browser possa enviar as infos sensíveis para o back end
+	 * Como eu passo essas informações via POST para o meu back end?
+	 * 	   vamos precisar passar informações de usuario e senha para esse back/end
+	 * 	   Pergunta: temos algum tipo de dado que possui esses atributos?
+	 * 			     Sim -> a classe Usuario
+	 * 				 Nao -> teríamos que criar uma nova classe
+	 *     decisao de projeto: já que a classe Usuario tem Email, Racf e Senha, vamos utiliza-la
+	 *     
+	 *     Porém precisamos anotar ess parâmetro de entrada com @RequestBody para o spring boot
+	 *     entender que ele vai pegar essas informações do corpo da requisição post
+	 *     
+	 *     o retorno, como traz, além das informações do usuario, o código de retorno http,
+	 *     precisa ser declarado como ResponseEntity
+	 *     ResponseEntity é a classe do SpringBoot que permite manipularmos os códigos de retorno http
+	 */
+	@PostMapping("/login")
+	public ResponseEntity<Usuario> fazerLogin(@RequestBody Usuario dadosLogin) {
+		Usuario resultado;
+		
+		// aqui eu faço a recuperação no banco a partir dos dados de login q recebi
+		resultado = dao.findByRacfOrEmail(dadosLogin.getRacf(), dadosLogin.getEmail());
+		
+		if (resultado != null) { // o usuario foi efetivamente encontrado, preciso conferir a senha
+			
+			// as senhas coincidem??
+			if (dadosLogin.getSenha().equals(resultado.getSenha())) {
+				return ResponseEntity.ok(resultado);
+			}
+			else { // usuario existe, mas senha não coincide... retorno 403
+				return ResponseEntity.status(403).build();
+			}
+		}
+		else { // nao foi encontrado, devo retornar um código 404
+			return ResponseEntity.notFound().build();
+		}
+	}
+}
+
+
+
+
+Referencias
+
+https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
+
+Git do Back End
+https://github.com/professorisidro/projeto_modernizacao
+
+
+
+
 UsuarioDAO
 
 package br.com.isidrocorp.modernizacao.dao;
