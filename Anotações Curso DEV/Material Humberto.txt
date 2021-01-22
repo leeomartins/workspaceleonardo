@@ -1,0 +1,965 @@
+===================ImplementarVoto===========================
+		Candidato candidato1 = new Candidato(1, "Xpto", "xpto@xpto.com.br", 1234,"vereador", "pjava");
+		Candidato candidato2 = new Candidato(2, "Abc", "abc@abc.com.br", 4321,"vereador", "pdev");
+		List<Voto> lista = new ArrayList<Voto>();
+		do {
+			int resp = JOptionPane.showConfirmDialog(null, "Candidato1?", "?", JOptionPane.YES_NO_OPTION);
+			if (resp==0) {
+				lista.add(new Voto(
+						new Eleitor(
+								Magica.i("Código"),
+								Magica.s("Nome"),
+								Magica.s("Email"),
+								Magica.i("Título"),
+								Magica.b("Ativo?")
+								),
+						candidato1,
+						true
+						));	
+			}else {
+				lista.add(new Voto(
+						new Eleitor(
+								Magica.i("Código"),
+								Magica.s("Nome"),
+								Magica.s("Email"),
+								Magica.i("Título"),
+								Magica.b("Ativo?")								
+								),
+						candidato2,
+						true
+						));					
+			}
+			
+		}while(JOptionPane.showConfirmDialog(null, "Continua?", "?", JOptionPane.YES_NO_OPTION)==0);
+		
+		Urna urna = new Urna(
+				321,
+				123,
+				"Sao Paulo",
+				lista
+				);
+		
+		System.out.println(urna.toString());
+		System.out.println("Total de votos: " + urna.totalVotos());
+		
+		for (Voto v : urna.getVotos()) {
+			System.out.println("Candidato: " + v.getCandidato().getNome());
+			System.out.println("Eleitor: " + v.getEleitor().getNome());
+		}
+
+
+
+==========================================================
+
+
+https://prnt.sc/wm04zq
+
+
+==========================Cargo===============================
+	private String nome;
+	private String nivel;
+	private float salario;
+	
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public String getNivel() {
+		return nivel;
+	}
+	public void setNivel(String nivel) {
+		this.nivel = nivel;
+	}
+	public float getSalario() {
+		return salario;
+	}
+	public void setSalario(float salario) {
+		this.salario = salario;
+	}
+	public Cargo(String nome, String nivel, float salario) {
+		super();
+		this.nome = nome;
+		this.nivel = nivel;
+		this.salario = salario;
+	}
+	public Cargo() {
+		super();
+	}
+	@Override
+	public String toString() {
+		return "Cargo [nome=" + nome + ", nivel=" + nivel + ", salario=" + salario + "]";
+	}
+	public void setAll(String nome, String nivel, float salario) {
+		this.nome = nome;
+		this.nivel = nivel;
+		this.salario = salario;
+	}
+==============================================================
+
+
+
+https://github.com/humbertosousa/workspacehumberto
+
+
+
+
+====================ImplementarTurma (conteudo do metodo main()==============
+
+Turma turma = new Turma(
+				Magica.s("Sigla"),
+				Magica.s("Periodo"),
+				Magica.s("Sala"),
+				new Aluno(
+						Magica.i("RM"),
+						Magica.s("Fone"),
+						Magica.s("Nome"),
+						Magica.b("Está ativo?")
+						),
+				new Professor(
+						Magica.s("Nome"),
+						Magica.f("Valor Hora"),
+						Magica.s("Formação"),
+						Magica.s("Area"),
+						Magica.s("Email")
+						),
+				new Curso(
+						Magica.s("Descricao"),
+						Magica.i("Carga Horária"),
+						Magica.f("Valor"),
+						new Unidade(
+								Magica.s("Nome"),
+								Magica.s("Bairro"),
+								Magica.s("Telefone")
+								)
+						)
+				);
+		
+		
+		System.out.println(turma.toString());
+		
+
+======================================================================
+
+===========getSaudacao() - Professor =======================
+	public String getSaudacao() {
+		String primeironome=nome;
+		if (nome.contains(" ")==true) {
+			primeironome = nome.substring(0, nome.indexOf(" "));
+		}
+		if (formacao.toUpperCase().equals("DOUTOR")==true) {
+			return "PhD " + primeironome;
+		}else if (formacao.toUpperCase().equals("MESTRE")==true) {
+			return "Ms. " + primeironome;
+		}else if (formacao.toUpperCase().equals("ESPECIALISTA")==true){
+			return "Especialista " + primeironome;
+		}else {
+			return "Sem formação: " + primeironome;
+		}	
+	}
+
+=============================================
+
+
+
+=================ImplementarConta==========================
+package br.com.banco.implementacao;
+
+import br.com.banco.beans.Agencia;
+import br.com.banco.beans.Cliente;
+import br.com.banco.beans.Conta;
+import br.com.banco.beans.Endereco;
+import br.com.banco.beans.Gerente;
+import br.com.banco.util.Magica;
+
+public class ImplementarConta {
+
+
+	
+	public static void main(String[] args) {	
+		Conta conta = new Conta(
+				Magica.i("Digite o número da conta"),
+				Magica.f("Digite o saldo"),
+				new Cliente(
+						Magica.i("Código do Cliente"),
+						Magica.s("Nome do Cliente"),
+						Magica.s("Email"),
+						new Endereco(
+								Magica.s("Logradouro Cliente"),
+								Magica.s("Bairro Cliente"),
+								Magica.s("Cidade Cliente"),
+								Magica.s("UF Cliente"),
+								Magica.s("CEP Cliente"),
+								Magica.s("Numero Cliente"),
+								Magica.s("Complemento Cliente")
+								)
+						),
+				new Agencia(
+						Magica.s("Nome da Agencia"),
+						Magica.i("Número Agencia"),
+						new Endereco(
+								Magica.s("Logradouro Agencia"),
+								Magica.s("Bairro Agencia"),
+								Magica.s("Cidade Agencia"),
+								Magica.s("UF Agencia"),
+								Magica.s("CEP Agencia"),
+								Magica.s("Numero Agencia"),
+								Magica.s("Complemento Agencia")
+								),
+						Magica.s("Telefone"),
+						Magica.i("Código da Agencia")
+						),
+				new Gerente(
+						Magica.s("Nome do Gerente"),
+						Magica.s("Telefone"),
+						Magica.s("Email"),
+						Magica.i("Funcional")
+						)
+				);
+		
+		System.out.println(conta.toString());
+		
+	}
+
+}
+
+
+=========================================================
+
+======================Cliente============================
+
+
+package br.com.ecommerceabc.modelo;
+
+public class Cliente {
+
+	private int id;
+	private String nome;
+	private String email;
+	private Endereco endereco;
+	
+	public void setAll(int id, String nome, String email, Endereco endereco) {
+		this.id = id;
+		this.nome = nome;
+		this.email = email;
+		this.endereco = endereco;
+	}
+
+	@Override
+	public String toString() {
+		return "Cliente [id=" + id + ", nome=" + nome + ", email=" + email + ", endereco=" + endereco + "]";
+	}
+
+	public Cliente() {
+		super();
+	}
+
+	public Cliente(int id, String nome, String email, Endereco endereco) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.email = email;
+		this.endereco = endereco;
+	}
+
+	public String getServidor() {
+		if (email.contains("@")) {
+			return email.substring(email.indexOf("@")+1);
+		}
+		return email;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
+	
+}
+
+
+========================================================
+
+
+=======================Produto=========================
+package br.com.ecommerceabc.modelo;
+/*
+ * Design Pattern (Padrões para projetos)
+ * DTO (Um pattern - Data Transfer Object), melhor forma para representar um diagrama de classe dentro da programação
+ * Diz que:
+ * - TODOS os atributos devem ser privados
+ * - CADA atributo deve possuir INDIVIDUALMENTE métodos getters e setters.
+ * - Toda classe BEANS deve possuir no MINIMO 2 construtores. Um vazio e outro com todos os parâmetros para os atributos
+ */
+public class Produto {
+	private int id;
+	private String descricao;
+	private float valorVenda;
+	private float valorCompra;
+	private int qtde;
+	
+	
+	@Override
+	public String toString() {
+		return "Produto [id=" + id + ", descricao=" + descricao + ", valorVenda=" + valorVenda + ", valorCompra="
+				+ valorCompra + ", qtde=" + qtde + "]";
+	}
+
+	public void setAll(int id, String descricao, float valorVenda, float valorCompra, int qtde) {
+		this.id = id;
+		this.descricao = descricao;
+		this.valorVenda = valorVenda;
+		this.valorCompra = valorCompra;
+		this.qtde = qtde;
+	}
+
+	public Produto() {
+		super();
+	}
+
+	public Produto(int id, String descricao, float valorVenda, float valorCompra, int qtde) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.valorVenda = valorVenda;
+		this.valorCompra = valorCompra;
+		this.qtde = qtde;
+	}
+
+	public float getPromocao(float porcentagem) {
+		return valorVenda - valorVenda * (porcentagem/100);
+	}
+	
+	public String verificarEstoque() {
+		if (qtde>20) {
+			return "Estoque alto";
+		}else if (qtde<5) {
+			return "Estoque baixo";
+		}
+		
+		return "Estoque normal";	
+	}
+	
+	
+	public void atualizarValores(float porcentagem) {
+		valorVenda = valorVenda + valorVenda * (porcentagem/100);
+		valorCompra = valorCompra + valorCompra * (porcentagem/100);
+	}
+	
+	public float getTotalCompras() {
+		return valorCompra * qtde;
+	}
+	
+	public float getTotalVendas() {
+		return valorVenda * qtde;
+	}
+	
+	public float getPromocao() {
+		return valorVenda * (float) 0.9;
+	}
+	
+
+	
+	public String getAll() {
+		return 
+				"Código.......: " + id + "\n" + 
+				"Descrição....: " + descricao + "\n" + 
+				"Valor Venda..: " + valorVenda + "\n" + 
+				"Valor Compra.: " + valorCompra + "\n" + 
+				"Qtde.........: " + qtde;
+	}
+	
+	
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}	
+	public String getDescricao() {
+		return descricao;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public float getValorVenda() {
+		return valorVenda;
+	}
+	public void setValorVenda(float valorVenda) {
+		this.valorVenda = valorVenda;
+	}
+	public float getValorCompra() {
+		return valorCompra;
+	}
+	public void setValorCompra(float valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+	public int getQtde() {
+		return qtde;
+	}
+	public void setQtde(int qtde) {
+		this.qtde = qtde;
+	}
+	
+
+	
+}
+
+=========================================================
+
+=======================TesteProduto=========================
+package br.com.ecommerceabc.teste;
+
+import br.com.ecommerceabc.modelo.Produto;
+
+public class TesteProduto {
+
+	public static void main(String[] args) {
+
+		Produto produto = new Produto();
+		produto.setDescricao("Churros");
+		produto.setQtde(10);
+		produto.setValorCompra(5);
+		produto.setValorVenda(8);
+		produto.setId(1);
+		
+		System.out.println("Produto: " + produto.getDescricao());
+		System.out.println("Promoção: " + produto.getPromocao(20));
+		System.out.println("Valor Venda: " + produto.getValorVenda());
+		produto.atualizarValores(10);
+		
+		System.out.println(produto.getAll());
+		System.out.println(produto.verificarEstoque());
+		System.out.println("Total Compras: " + produto.getTotalCompras());
+		System.out.println("Total Vendas: " + produto.getTotalVendas());
+		
+
+		
+	}
+
+}
+
+=========================================================
+
+=======================TesteProduto2=========================
+package br.com.ecommerceabc.teste;
+
+import javax.swing.JOptionPane;
+
+import br.com.ecommerceabc.modelo.Produto;
+
+public class TesteProduto2 {
+
+	public static void main(String[] args) {
+		
+		Produto produto = new Produto();
+		System.out.println(produto.getDescricao().length());
+		
+		produto.setAll(
+				Integer.parseInt(JOptionPane.showInputDialog("Código")), 
+				JOptionPane.showInputDialog("Descricao"), 
+				Float.parseFloat(JOptionPane.showInputDialog("Valor Venda")), 
+				Float.parseFloat(JOptionPane.showInputDialog("Valor Compra")), 
+				Integer.parseInt(JOptionPane.showInputDialog("Qtde"))
+				);
+		
+		System.out.println(produto.getAll());
+		
+
+	}
+
+}
+
+=========================================================
+
+
+=======================TesteProduto3=========================
+package br.com.ecommerceabc.teste;
+
+import javax.swing.JOptionPane;
+
+import br.com.ecommerceabc.modelo.Produto;
+
+public class TesteProduto3 {
+
+	public static void main(String[] args) {
+		
+		Produto produto = new Produto(
+				Integer.parseInt(JOptionPane.showInputDialog("ID")),
+				JOptionPane.showInputDialog("Descricao"),
+				Float.parseFloat(JOptionPane.showInputDialog("Valor Venda")),
+				Float.parseFloat(JOptionPane.showInputDialog("Valor Compra")),
+				Integer.parseInt(JOptionPane.showInputDialog("Qtde"))
+				);
+		
+		
+		System.out.println(produto.toString());
+		
+
+	}
+
+}
+
+=========================================================
+
+
+
+
+=====================TesteElevador===================
+package br.com.elevadores.teste;
+
+import br.com.elevadores.modelo.Elevador;
+
+public class AplicacaoElevador {
+
+	public static void main(String[] args) {
+		
+		
+		Elevador elevador = new Elevador();
+		elevador.inicializar((short) 10, (short) 10, (short) 0);
+		System.out.println(elevador.verificarStatus());
+		elevador.subir();
+		elevador.subir();
+		System.out.println(elevador.verificarStatus());
+		elevador.entrar((short) 5);
+		elevador.entrar((short) 15);
+		System.out.println(elevador.verificarStatus());
+
+	}
+
+}
+
+
+===================================================
+
+======================Elevador=======================
+package br.com.elevadores.modelo;
+
+public class Elevador {
+
+	private short capacidadeMaxima;
+	private short andarMaximo;
+	private short andarMinimo;
+	private short qtdePessoas;
+	private short andarAtual;
+	
+	public void sair() {
+		if (qtdePessoas>0) {
+			qtdePessoas--;
+		}
+	}
+	
+	public void sair(short qtde) {
+		short resultado = (short) (qtdePessoas-qtde);
+		if (resultado>=0) {
+			qtdePessoas-=qtde;
+		}
+	}
+	
+	public void entrar(short qtde) {
+		short resultado = (short) (qtde + qtdePessoas);
+		if (resultado<=capacidadeMaxima) {
+			qtdePessoas+=qtde;
+		}
+	}
+	
+	
+	public void descer() {
+		if (andarAtual>andarMinimo) {
+			andarAtual--;
+		}
+	}
+	
+	public void subir() {
+		if (andarAtual<andarMaximo) {
+			andarAtual++;
+		}
+	}
+	
+	public String verificarStatus() {
+		return 
+				"Qtde Pessoas......: "  + qtdePessoas + "\n" + 
+				"Andar Atual.......: "  + andarAtual + "\n" +
+				"Capacidade Máxima.: "  + capacidadeMaxima;
+	}
+	
+	public void inicializar(short capacidade, short maior, short menor) {
+		capacidadeMaxima = capacidade;
+		andarMaximo=maior;
+		andarMinimo=menor;
+	}
+}
+
+=====================================================
+
+====================AplicacaoVeiculo===================
+		// Criar um objeto => ele não possui qualquer repartição
+		// Exemplo: Veiculo objeto;
+		// Instanciar um objeto => ele possui todas as repartições
+		// Exemplo: Veiculo objeto = new Veiculo();
+
+		Veiculo objeto = new Veiculo();
+		objeto.preencherMontadora("fiat");
+		objeto.preencherModelo("Uno");
+		objeto.preencherValor(30000);
+		objeto.preencherVelocidadeMaxima(180);
+		System.out.println("Montadora.........: " + objeto.retornarMontadora());
+		System.out.println("Modelo............: " + objeto.retornarModelo());
+		System.out.println("Valor.............: " + objeto.retornarValor());
+		System.out.println("Velocidade Máxima.: " + objeto.retornarVelocidadeMaxima());
+		
+		System.out.println(objeto.ligar());
+		
+		objeto.acelerar();
+		objeto.acelerar();
+		objeto.acelerar();
+		System.out.println(objeto.verificarStatus());
+		
+		System.out.println(objeto.desligar());
+===================================================
+
+======================Veiculo=========================
+package br.com.concessionariaxyz.modelo;
+
+public class Veiculo {
+	
+	private String montadora;
+	private String modelo;
+	private float velocidadeMaxima;
+	private float velocidadeAtual;
+	private boolean status;
+	private float valor;
+	
+	// Sintaxe dos métodos
+	// <modificador> <tipo do retorno> <nome do método>(<tipo do param> <nome do param>) 
+	
+	public String verificarStatus() {
+		return "Ligado?" + status + "\n" + "Velocidade Atual: " + velocidadeAtual;
+	}
+	
+	
+	public void desacelerar() {
+		if (velocidadeAtual>0) {
+			velocidadeAtual-=10;
+		}
+	}
+	
+	
+	public void acelerar() {
+		if (velocidadeAtual<velocidadeMaxima) {
+			velocidadeAtual+=10;
+		}
+	}
+	
+	
+
+	
+	public String desligar() {
+		if (status==true) {
+			status=false;
+		}
+		return "Veículo desligado";
+	}
+	
+	
+	public String ligar() {
+		if (status==false) {
+			status=true;
+		}
+		return "Veículo Ligado";
+		
+	}
+	
+	public float retornarValor() {
+		return valor;
+	}
+	
+	public void preencherValor(float param) {
+		if (param>0) {
+			valor = param;
+		}
+	}
+	
+	public float retornarVelocidadeMaxima() {
+		return velocidadeMaxima;
+	}
+	
+	public void preencherVelocidadeMaxima(float param) {
+		if (param>0) {
+			velocidadeMaxima = param;
+		}
+	}
+	
+	public String retornarModelo() {
+		return modelo;
+	}
+	
+	
+	public void preencherModelo(String param) {
+		modelo = param.toUpperCase();
+	}
+	
+	
+	public String retornarMontadora() {
+		return montadora;
+	}
+	
+	
+	
+	public void preencherMontadora(String param) {
+		montadora = param.toUpperCase();
+	}
+	
+}
+
+=======================================================
+
+
+https://astah.net/downloads/
+
+
+https://github.com/humbertosousa/workspacehumberto
+
+===================Slide77Exercicio4================================
+		String nome="";
+		short idade=0;
+		short qtdeMaioresIdade=0;
+		short qtdePessoas=0;
+		short totalIdades=0;
+		short idadeMaisExperiente=0;
+		String nomeMaisExperiente="";
+		short idadeMaisJovem=0;
+		String nomeMaisJovem="";
+		do {
+			nome = JOptionPane.showInputDialog("Digite o nome").toUpperCase();
+			idade = Short.parseShort(JOptionPane.showInputDialog("Digite a idade"));
+			if (idade>=18) {
+				qtdeMaioresIdade = (short) (qtdeMaioresIdade +  1);
+				// qtdeMaioresIdade++;
+				// qtdeMaioresIdade+=1;
+			}
+			qtdePessoas++;
+			totalIdades+=idade; //totalIdades=totalIdades+idade;
+			if (idade>idadeMaisExperiente) {
+				idadeMaisExperiente=idade;
+				nomeMaisExperiente=nome;
+			}
+			
+			if (idade<idadeMaisJovem || qtdePessoas==1) {
+				idadeMaisJovem=idade;
+				nomeMaisJovem=nome;				
+			}
+			
+		}while(JOptionPane.showConfirmDialog(null, "Continuar?", "Pergunta", JOptionPane.YES_NO_OPTION)==0);
+		System.out.println("Maiores de Idade: " + qtdeMaioresIdade);
+		System.out.println("Média das idades: " + (totalIdades/qtdePessoas));
+		System.out.println("A pessoa mais experiente é a: " + nomeMaisExperiente + " com " + idadeMaisExperiente + " anos.");
+		System.out.println("A pessoa mais jovem é a: " + nomeMaisJovem+ " com " + idadeMaisJovem + " anos.");	
+
+=============================================================================================
+
+
+
+=====================EXERCICIO WHILE================================================================
+
+(Slide 77 - PPT 1-2-3 - Github)
+
+
+* Crie um programa que peça para o usuário o dia, mês e ano em variáveis separadas. 
+Valide todos os dados e aceite somente dados válidos. No final exibe a data completa.
+
+* Crie um programa que pergunte ao usuário o seu nível de escolaridade (Médio, Superior ou Pós) enquanto a resposta for válida, irá computando os totais dos níveis digitados, no final apresente somente o nível que foi mais votado.
+
+* Monte um programa que solicite a idade e o nome das pessoas. 
+A aplicação continuará perguntando nome e idade enquanto o usuário afirmar que deseja continuar.
+Ao terminar, a aplicação deverá exibir:
+- a quantidade de pessoas maiores de idade e 
+- a média entre todas as idades que foram digitadas. 
+- a pessoa mais experiente (nome e idade)
+- a pessoa mais jovem (nome e idade)
+
+
+===========================================================================================================
+
+
+
+==================DesafioDo=============================
+int valor = Integer.parseInt(JOptionPane.showInputDialog("Valor"));
+		int chute=0;
+		int contador=0;
+		do {
+			
+			chute = Integer.parseInt(JOptionPane.showInputDialog("Tente Advinhar"));
+			contador = contador+1;
+			//contador+=1;
+			//contador++;
+			if (chute>valor) {
+				JOptionPane.showMessageDialog(null, "Você está chutando alto");
+			}else if (chute<valor){
+				JOptionPane.showMessageDialog(null, "Você está chutando baixo");
+			}
+			
+		}while(chute!=valor);
+		
+		JOptionPane.showMessageDialog(null, "Parabéns você acertou com: " + contador + " tentativa(s).");
+		
+		 /* 
+		 * 3º Fase:
+		 * Contar quantas tentativas o Jogador2 utilizou para acertar
+		 * No final exibir essa quantidade junto com a mensagem de Parabéns
+		 */
+		
+====================================================
+
+
+
+==================Lista2Exercicio4====================
+int valor1 = Integer.parseInt(JOptionPane.showInputDialog("Valor1"));
+		int valor2 = Integer.parseInt(JOptionPane.showInputDialog("Valor2"));
+		int valor3 = Integer.parseInt(JOptionPane.showInputDialog("Valor3"));
+		if (valor1==valor2 || valor1==valor3 || valor2==valor3) {
+			System.out.println("Existem valores iguais");
+		}else {	
+			if (valor1>valor2 && valor1>valor3) {
+				System.out.println(valor1);
+				if (valor2>valor3) {
+					System.out.println(valor2);
+					System.out.println(valor3);
+				}else {
+					System.out.println(valor3);
+					System.out.println(valor2);
+				}
+			}else if (valor2>valor3 && valor2>valor1) {
+				System.out.println(valor2);
+				if (valor1>valor3) {
+					System.out.println(valor1);
+					System.out.println(valor3);
+				}else {
+					System.out.println(valor3);
+					System.out.println(valor1);
+				}
+			}else {
+				System.out.println(valor3);
+				if (valor1>valor2) {
+					System.out.println(valor1);
+					System.out.println(valor2);
+				}else {
+					System.out.println(valor2);
+					System.out.println(valor1);
+				}
+			}
+		}
+
+====================================================
+
+=================Lista2Exercicio3======================
+		int valor1 = Integer.parseInt(JOptionPane.showInputDialog("Valor 1"));
+		int valor2 = Integer.parseInt(JOptionPane.showInputDialog("Valor 2"));
+		char operador = JOptionPane.showInputDialog("Digite <+>, <->, <*> ou </>").charAt(0);
+		//String operador = JOptionPane.showInputDialog("Digite <+>, <->, <*> ou </>");
+		int resultado=0;
+		//if (operador.equals("+")) {
+		if (operador=='+') {
+			resultado = valor1+valor2;
+		}else if (operador=='-') {
+			resultado = valor1-valor2;
+		}else if (operador=='*') {
+			resultado = valor1*valor2;
+		}else if (operador=='/') {
+			
+			if (valor2!=0) { //se não for igual a zero
+				resultado=valor1/valor2;
+			}
+			
+		} else {
+			System.out.println("Operador inválido");
+		}
+		System.out.println("Resultado: " + resultado);
+		
+		
+		
+		//System.out.println(valor1 + "\n" + valor2 + "\n" + valor3);
+
+===================================================
+
+String disciplina = JOptionPane.showInputDialog("Disciplina:");
+	float nota1 = Float.parseFloat(JOptionPane.showInputDialog("Nota 1"));
+	float nota2 = Float.parseFloat(JOptionPane.showInputDialog("Nota 2"));
+	float media = (nota1+nota2)/2;
+	
+	if (media>=6) {
+		System.out.println("Parabéns você foi aprovado na disciplina: " + disciplina);
+	}
+	
+	if (media<4) {
+		System.out.println("Infelizmente você foi reprovado na disciplina: " + disciplina);
+	
+	}
+	
+	System.out.println("Média:" + media);
+
+=====================TiposPrimitivos.java=============================
+/*
+		 * boolean => dado lógico (true/false) - Boolean
+		 * char => 1 caracter - Character
+		 * -- para numeros inteiros ---
+		 * byte => -127 +128 - Byte
+		 * short => -32.??? + 32.??? - Short
+		 * int => -2bilhoes + 2bilhoes - Integer
+		 * long => ????lhoes   - Long
+		 * -- para números reais -- 
+		 * float => menos exatidão
+		 * double => dobro de precisão nas casas decimais quando comparado ao float
+		 */
+		
+		/* criem as variaveis para:
+		 * nota (semestral1)
+		 * nota (semestral2)
+		 * falta (máximo 200)
+		 * disciplina (nome da matéria)
+		 * media (calculem) 
+		 */
+
+		float semestral1 = Float.parseFloat(JOptionPane.showInputDialog("Semestral 1"));
+		float semestral2 = Float.parseFloat(JOptionPane.showInputDialog("Semestral 2"));
+		short faltas = Short.parseShort(JOptionPane.showInputDialog("Faltas"));
+		String disciplina = JOptionPane.showInputDialog("Disciplina");
+		float media = (semestral1+semestral2) /2;
+		System.out.println("Disciplina: " + disciplina);
+		System.out.println("Faltas: " + faltas);
+		System.out.println("Média: " + media);
+		// Cast: conversão entre tipos compatíveis
+		float semestral3 = (float) 7.45;
+		int teste = (int) semestral3;
+		short pequena = (short) teste;
+		long maior = pequena;
+
+=====================================================================

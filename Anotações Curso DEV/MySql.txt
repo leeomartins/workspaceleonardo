@@ -1,0 +1,247 @@
+create table itau.cargos(
+cod_cargo char(2) not null primary key,
+nome_cargo varchar(50) not null,
+valor_cargo decimal(8,2) not null
+);
+
+create table itau.funcionarios(
+matricula int not null auto_increment,
+nome_funcionario varchar(50) not null,
+cod_cargo char(2) not null,
+primary key (matricula),
+foreign key (cod_cargo) references cargos(cod_cargo));
+
+insert into itau.cargos
+(cod_cargo,nome_cargo,valor_cargo)
+values
+("C1","DBA em banco de Dados",9800),
+("C2","Analista de Sistemas Senior",7850),
+("C3","Gerente de CPD",5850),
+("C4","Suporte de Help Desk",2580);
+
+insert into itau.funcionarios
+(nome_funcionario,cod_cargo)
+values
+("Aline Ribeiro","C1"),
+("Emanuelle Faria","C3"),
+("Leandro Alves da Silva","C1"),
+("Pedro Simão","C3");
+
+
+
+-- utilizando comando nativos de vinculo entre tabelas com left join, right join e inner join
+select f.nome_funcionario,c.nome_cargo,c.valor_cargo
+from itau.cargos as c
+inner join itau.funcionarios as f
+on(f.cod_cargo=c.cod_cargo);
+
+select f.nome_funcionario,c.nome_cargo,c.valor_cargo
+from itau.cargos as c
+left join itau.funcionarios as f
+on(f.cod_cargo=c.cod_cargo);
+
+-- criando relacionamento entre tabelas no banco de dados 
+use itau;
+CREATE TABLE `Produtos` (
+	`cod_produto` INT NOT NULL AUTO_INCREMENT,
+	`nome_produto` varchar(50) NOT NULL,
+	`valor_produto` DECIMAL(8,2) NOT NULL,
+	`cod_marca` INT NOT NULL,
+	PRIMARY KEY (`cod_produto`)
+);
+
+insert into itau.produtos
+(nome_produto,valor_produto,cod_marca)
+values
+("Geladeira",1850,1);
+("Fogão",1700,1),
+("Depurador de Ar",190,1),
+("Celular",1800,2),
+("TV 32 Pol",1750,2),
+("Liquidificador",89.99,3),
+("Batedeira",279.99,3),
+("Aspirador de Pó",320.00,4);
+
+
+
+CREATE TABLE `Marcas` (
+	`cod_marca` INT NOT NULL AUTO_INCREMENT,
+	`nome_marca` varchar(50) NOT NULL,
+	PRIMARY KEY (`cod_marca`)
+);
+
+ALTER TABLE `Produtos` ADD CONSTRAINT `Produtos_fk0` FOREIGN KEY (`cod_marca`) REFERENCES `Marcas`(`cod_marca`);
+
+insert into itau.marcas
+(nome_marca)
+values
+("Brastemp"),
+("LG"),
+("Walita"),
+("Cadence");
+
+select p.nome_produto,p.valor_produto,m.nome_marca
+from itau.produtos as p,
+itau.marcas as m 
+where p.cod_marca=m.cod_marca;
+
+-- demonstrando o resultado final de valores vinculados entre tabelas 
+select count(p.cod_marca) as Total_Produtos, m.nome_marca
+from itau.produtos as p,
+itau.marcas as m 
+where p.cod_marca=m.cod_marca group by (m.nome_marca);
+
+
+
+-- calculo dos campos no select
+SELECT 
+    produto_venda,
+    quantidade_venda,
+    valor_unitario_venda,
+    (quantidade_venda * valor_unitario_venda) AS Sub_Total,
+    nome_vendedor
+FROM
+    itau.vendas;
+
+-- calculo dos campos do select somando valores e aglutinando e efetuando a quebra com group by.
+SELECT 
+    SUM(quantidade_venda * valor_unitario_venda) AS Total_Geral,
+    nome_vendedor
+FROM
+    itau.vendas
+GROUP BY nome_vendedor;
+
+SELECT 
+    SUM(quantidade_venda * valor_unitario_venda) AS Total_Geral,
+    estado_venda
+FROM
+    itau.vendas
+GROUP BY estado_venda;
+
+
+insert into itau.vendas
+(produto_venda,quantidade_venda,valor_unitario_venda,nome_vendedor)
+values
+("Mouse",50,38.50,"Pedro"),
+("Teclado",20,45.99,"Cristina"),
+("PenDrive",100,50,"Cristina"),
+("Impressora",60,480.99,"Marcos"),
+("Monitor",120,399.99,"Marcos"),
+("Estabilizador",80,350,"Cristina");
+
+
+create table itau.vendas(
+codigo_venda int not null auto_increment primary key,
+produto_venda varchar(40) not null,
+quantidade_venda int(4) not null,
+valor_unitario_venda decimal(8,2)not null,
+nome_vendedor varchar(50));
+
+
+insert into itau.clientes
+(nome_cliente,cpf_cliente,endereco_cliente,bairro_cliente,cep_cliente,estado_residencia_cliente,idade_cliente,agencia_cliente,conta_corrente_cliente,digito_verificador_cliente,ddd_cliente,telefone_cliente,data_modificacao_registro_cliente)
+select nome_cliente,"atualizar",endereco_cliente,bairro_cliente,"0","xx",idade_cliente,"0","0",0,"000","0","2021-01-14 14:38" from unibanco.clientes;
+
+
+
+
+create table itau.clientes(
+codigo_cliente int not null auto_increment,
+nome_cliente varchar(50) not null,
+cpf_cliente char(11) not null,
+endereco_cliente varchar(80) not null,
+bairro_cliente varchar(50) not null,
+cep_cliente char(8) not null,
+estado_residencia_cliente char(2) not null,
+idade_cliente int(3) not null,
+agencia_cliente char(4) not null,
+conta_corrente_cliente char(8) not null,
+digito_verificador_cliente int(1) not null,
+ddd_cliente char(3) not null,
+telefone_cliente char(9) not null,
+data_modificacao_registro_cliente datetime,
+primary key (codigo_cliente,cpf_cliente));
+
+
+
+
+# comando utilizado para criar o repositório do data base 
+# create database itau;
+
+#instrução utilizada para por o database em uso.
+use itau;
+
+-- string utilizada para fazer a criação de tabelas no banco de dados
+create table itau.clientes(
+codigo_cliente integer not null primary key,
+nome_cliente varchar(50) not null,
+idade_cliente integer(3) not null,
+email_cliente varchar(80) not null);
+
+-- permite ver a estrtura da tabela
+describe itau.clientes;
+
+-- string utilizada para inserir registros na tabela.
+insert into itau.clientes
+(codigo_cliente,nome_cliente,idade_cliente,email_cliente)
+values
+(1,"Jéssica de Paula",22,"jessica.p@unibanco.br"),
+(2,"Ettore Gambini",25,"ettore.g@unibanco.br"),
+(3,"Emanuelle Faria",19,"emanuelle.f@unibanco.br"),
+(4,"Giulliano Pastor",28,"giulliano.p@unibanco.br"),
+(5,"Ricardo Alexandre Bontempo",48,"ricardo.ab@gama.br");
+
+-- sintaxe utilizada para trazer a menor idade na tabela
+select min(idade_cliente) from itau.clientes;
+select * from itau.clientes where idade_cliente=18;
+
+-- sintaxe utilizada para trazer a maior idade na tabela
+select max(idade_cliente) from itau.clientes;
+select * from itau.clientes where idade_cliente=99;
+
+-- trabalhando com mais de um select na mesma estrutura da tabela
+select * from itau.clientes where idade_cliente = (select max(idade_cliente) from itau.clientes);
+
+-- este comando permite fazer filtro específicos em registros pré-definidos 
+select nome_cliente,idade_cliente from itau.clientes where idade_cliente in(20,30,40) order by idade_cliente;
+
+-- este comando permite trazer somente o registro em específico.
+select * from itau.clientes where codigo_cliente=1;
+
+-- este comando permite trazer todos os registros que começa com o nome desejado e não sabemos o restante.
+select * from itau.clientes where nome_cliente like "Jéssica%";
+
+-- este comando permite trazer todos os registros que termina com o sobrenome desejado e não sabemos o que está antes do sobrenome
+select * from itau.clientes where nome_cliente like "%Gambini";
+
+-- este comando irá trazer todos os nomes que comecem com a letra B.
+select * from itau.clientes where nome_cliente like "B%";
+
+-- este comando permite trazer todos os registros que iniciam ou terminam ou esteja no meio com o nome Alexandre 
+select * from itau.clientes where nome_cliente like "%Alexandre%";
+
+-- este comando permite criar novos campos na estrutura databela
+alter table itau.clientes add endereco varchar(40) not null;
+
+-- este comando permite excluir campos na estrutura da tabela.
+alter table itau.clientes drop endereco;
+
+-- este comando permite renomear campos existentes na  estrutura da tabela.
+alter table itau.clientes rename column endereco to endereco_cliente;
+
+-- este comando permite ajustar a estrutura de um campo já criado na tabela.
+alter table itau.clientes change column bairro_cliente bairro_cliente varchar(40) not null;
+
+-- estes comandos permitem atualizar os registros da tabela conforme a sua condição
+update itau.clientes set endereco_cliente=" Atualizar Endereço" where endereco_cliente='';
+update itau.clientes set bairro_cliente="Vila Romana" where nome_cliente like "Emanuelle Faria";
+update itau.clientes set endereco="Rua Tito" where nome_cliente like "Emanuelle Faria";
+
+-- este comando permite fazer um contador de registros na tabela 
+select count(*) from itau.clientes;
+
+-- este comando permite criar um backup da tabela a quente com base no select compondo o comando
+create table itau.bck_clientes select * from itau.clientes;
+
+-- este comando permite apagar todos os registros da tabela
+delete from itau.clientes;

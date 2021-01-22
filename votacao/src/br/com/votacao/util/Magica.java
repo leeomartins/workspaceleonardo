@@ -1,4 +1,4 @@
-package br.com.ecommerceabc.util;
+package br.com.votacao.util;
 
 import javax.swing.JOptionPane;
 
